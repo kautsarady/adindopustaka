@@ -1,0 +1,3 @@
+- binding search query in gin rest
+- test gql
+- test rest

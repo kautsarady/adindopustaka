@@ -1,0 +1,361 @@
+basePath: '{{.BasePath}}'
+definitions:
+  httputil.HTTPError:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+    type: object
+  item.Author:
+    properties:
+      books:
+        items:
+          type: integer
+        type: array
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  item.Category:
+    properties:
+      books:
+        items:
+          type: integer
+        type: array
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  item.Tag:
+    properties:
+      books:
+        items:
+          type: integer
+        type: array
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  model.AbsItem:
+    properties:
+      books:
+        items:
+          type: integer
+        type: array
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  model.Book:
+    properties:
+      authors:
+        items:
+          $ref: '#/definitions/item.Author'
+        type: array
+      categories:
+        items:
+          $ref: '#/definitions/item.Category'
+        type: array
+      description:
+        type: string
+      gramed_url:
+        type: string
+      id:
+        type: integer
+      image_url:
+        type: string
+      tags:
+        items:
+          $ref: '#/definitions/item.Tag'
+        type: array
+      title:
+        type: string
+    type: object
+  model.CompAbs:
+    properties:
+      books:
+        items:
+          $ref: '#/definitions/model.Book'
+        type: array
+      item:
+        $ref: '#/definitions/model.AbsItem'
+        type: object
+    type: object
+host: '{{.Host}}'
+info:
+  contact:
+    email: kautsarady@gmail.com
+    name: kautsarady
+  description: Adindopustaka API documentation
+  license: {}
+  title: Adindopustaka API
+  version: "1.0"
+paths:
+  /api/author:
+    get:
+      consumes:
+      - application/json
+      operationId: get-all-authors
+      parameters:
+      - description: page number (default=1)
+        format: string
+        in: query
+        name: page
+        type: string
+      - description: per_page product count (default=20)
+        format: string
+        in: query
+        name: per_page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/item.Author'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+            type: object
+      summary: Get All Authors
+  /api/author/{id}:
+    get:
+      consumes:
+      - application/json
+      operationId: get-all-getAuthorByID
+      parameters:
+      - description: author id to search
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: page number of the item books (default=1)
+        format: string
+        in: query
+        name: page
+        type: string
+      - description: per_page product count of the item books (default=20)
+        format: string
+        in: query
+        name: per_page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.CompAbs'
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+            type: object
+      summary: Get Author By ID
+  /api/book:
+    get:
+      consumes:
+      - application/json
+      operationId: get-all-books
+      parameters:
+      - description: page number (default=1)
+        format: string
+        in: query
+        name: page
+        type: string
+      - description: per_page product count (default=20)
+        format: string
+        in: query
+        name: per_page
+        type: string
+      - description: search filter ('authors', 'categories', 'tags', default='all')
+        in: query
+        name: filter
+        type: string
+      - description: search query ('tere liye', 'agama', 'smp', default='')
+        in: query
+        name: query
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Book'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+            type: object
+      summary: Get All Books
+  /api/book/{id}:
+    get:
+      consumes:
+      - application/json
+      operationId: get-all-getBookByID
+      parameters:
+      - description: book id to search
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Book'
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+            type: object
+      summary: Get Book By ID
+  /api/category:
+    get:
+      consumes:
+      - application/json
+      operationId: get-all-categories
+      parameters:
+      - description: page number (default=1)
+        format: string
+        in: query
+        name: page
+        type: string
+      - description: per_page product count (default=20)
+        format: string
+        in: query
+        name: per_page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/item.Category'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+            type: object
+      summary: Get All Categories
+  /api/category/{id}:
+    get:
+      consumes:
+      - application/json
+      operationId: get-all-getCategoryByID
+      parameters:
+      - description: category id to search
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: page number of the item books (default=1)
+        format: string
+        in: query
+        name: page
+        type: string
+      - description: per_page product count of the item books (default=20)
+        format: string
+        in: query
+        name: per_page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.CompAbs'
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+            type: object
+      summary: Get Category By ID
+  /api/tag:
+    get:
+      consumes:
+      - application/json
+      operationId: get-all-tags
+      parameters:
+      - description: page number (default=1)
+        format: string
+        in: query
+        name: page
+        type: string
+      - description: per_page product count (default=20)
+        format: string
+        in: query
+        name: per_page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/item.Tag'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+            type: object
+      summary: Get All Tags
+  /api/tag/{id}:
+    get:
+      consumes:
+      - application/json
+      operationId: get-all-getTagByID
+      parameters:
+      - description: tag id to search
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: page number of the item books (default=1)
+        format: string
+        in: query
+        name: page
+        type: string
+      - description: per_page product count of the item books (default=20)
+        format: string
+        in: query
+        name: per_page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.CompAbs'
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+            type: object
+      summary: Get Tag By ID
+swagger: "2.0"

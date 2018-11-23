@@ -1,0 +1,43 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+type Book {
+  id: Int!
+  title: String!
+  authors: [Author!]!
+  categories: [Category!]!
+  image_url: String!
+  gramed_url: String!
+  tags: [Tag!]!
+  description: String!
+}
+
+type Author {
+  id: Int!
+  name: String!
+  books(page: Int!, per_page: Int!): [Book!]!
+}
+
+type Category {
+  id: Int!
+  name: String!
+  books(page: Int!, per_page: Int!): [Book!]!
+}
+
+type Tag {
+  id: Int!
+  name: String!
+  books(page: Int!, per_page: Int!): [Book!]!
+}
+
+type Query {
+  Book(id: Int!): Book!
+  Author(id: Int!): Author!
+  Category(id: Int!): Category!
+  Tag(id: Int!): Tag!
+  AllBooks(page: Int!, per_page: Int!): [Book!]!
+  AllAuthors(page: Int!, per_page: Int!): [Author!]!
+  AllCategories(page: Int!, per_page: Int!): [Category!]!
+  AllTags(page: Int!, per_page: Int!): [Tag!]!
+}
