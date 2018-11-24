@@ -2,10 +2,10 @@
 
 
 [[projects]]
-  branch = "master"
   name = "github.com/99designs/gqlgen"
   packages = ["complexity","graphql","graphql/introspection","handler"]
-  revision = "f7932b40ee0f75b35428af917cd05193b7f3414f"
+  revision = "6f486bde038887adf67c3e3766624ef111ea95cf"
+  version = "v0.6.0"
 
 [[projects]]
   name = "github.com/PuerkitoBio/purell"
@@ -90,12 +90,6 @@
   packages = [".","simplelru"]
   revision = "20f1fb78b0740ba8c3cb143a61e86ba5c8669768"
   version = "v0.5.0"
-
-[[projects]]
-  name = "github.com/joho/godotenv"
-  packages = ["."]
-  revision = "23d116af351c84513e1946b527c88823e476be13"
-  version = "v1.3.0"
 
 [[projects]]
   name = "github.com/json-iterator/go"
@@ -202,6 +196,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "2987cea7e52b8f458d04b48cb12d352610cc043b8728bdc4dbeb54bb45ddeee9"
+  inputs-digest = "aa57cafd5ed807a8f50bb9773792c3a6b148940865eac877460447077ffb7139"
   solver-name = "gps-cdcl"
   solver-version = 1
