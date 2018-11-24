@@ -2,10 +2,10 @@
 
 
 [[projects]]
+  branch = "master"
   name = "github.com/99designs/gqlgen"
   packages = ["complexity","graphql","graphql/introspection","handler"]
-  revision = "6f486bde038887adf67c3e3766624ef111ea95cf"
-  version = "v0.6.0"
+  revision = "f7932b40ee0f75b35428af917cd05193b7f3414f"
 
 [[projects]]
   name = "github.com/PuerkitoBio/purell"
@@ -196,6 +196,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "aa57cafd5ed807a8f50bb9773792c3a6b148940865eac877460447077ffb7139"
+  inputs-digest = "e93767cc60de33b416ea1e04999b4aeba8c5253e65956426f51ae346c1e1c876"
   solver-name = "gps-cdcl"
   solver-version = 1
