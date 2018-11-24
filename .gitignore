@@ -1,4 +1,4 @@
-.env
+*.env
 seeder
 vendor
 kubernetes.yml
