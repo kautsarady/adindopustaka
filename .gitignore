@@ -2,3 +2,5 @@
 seeder
 vendor
 kubernetes.yml
+app.yml
+Makefile
