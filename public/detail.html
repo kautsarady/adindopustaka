@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{{ .Title }}</title>
+    <style>
+        .book-img {
+            width: 30%;
+        }
+    </style>
+</head>
+
+<body>
+    <h2><a href="/">All Book</a></h2>
+    <h2><a href="/filter">Choose Filter</a></h2>
+    <img class="book-img" src="{{ .ImageURL }}" alt="image">
+
+    <h2>{{ .Title }}</h2>
+
+    <p><b>Author</b></p>
+    {{ range .Authors }}
+    <a href="/author/{{ .ID }}">{{ .Name }}</a>
+    {{ end }}
+
+    <p><b>Description</b></p>
+    <p>{{ .Description }}</p>
+    <a href="{{ .GramedURL }}">Go to product</a>
+
+    <p><b>Category</b></p>
+    {{ range .Categories }}
+    <a href="/category/{{ .ID }}">{{ .Name }}</a><br>
+    {{ end }}
+
+    <p><b>Tag</b></p>
+    {{ range .Tags }}
+    <a href="/tag/{{ .ID }}">{{ .Name }}</a><br>
+    {{ end }}
+
+</body>
+
+</html>

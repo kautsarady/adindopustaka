@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Adindopustaka</title>
+    <style>
+        body {
+            background-color: lavender;
+        }
+
+        .deck {
+            max-width: 90%;
+            margin: auto;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            width: 10%;
+            height: auto;
+            margin: 10px;
+            border-style: solid;
+            border-width: 5px;
+            border-color: whitesmoke;
+            background-color: whitesmoke;
+        }
+
+        .card-img {
+            width: 100%;
+        }
+
+        /* .card-title{
+            width: 100%;
+            margin: auto;
+        } */
+    </style>
+</head>
+
+<body>
+    <h2><a href="/filter">Choose Filter</a></h2>
+    <a href="/?page={{ .Metadata.Prev }}&per_page={{ .Metadata.PerPage }}">Prev</a>
+    <a href="/?page={{ .Metadata.Next }}&per_page={{ .Metadata.PerPage }}">Next</a>
+    <div class="deck">
+        {{ range .Data }}
+        <div class="card">
+            <img class="card-img" src="{{ .ImageURL }}" alt="thumbnail">
+            <h4 class="card-title"><a href="/book/{{ .ID }}"><b>{{ .Title }}</b></a></h4>
+        </div>
+        {{ end }}
+    </div>
+</body>
+
+</html>

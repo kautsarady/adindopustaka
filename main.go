@@ -5,9 +5,10 @@ import (
 	"log"
 	"os"
 
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/kautsarady/adindopustaka/api"
 	"github.com/kautsarady/adindopustaka/model"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
@@ -17,14 +18,11 @@ func main() {
 
 	dao, err := model.Make(cs)
 	if err != nil {
-		log.Fatalf("Failed connecting to database: %v", err)
+		log.Fatal(err)
 	}
-	defer dao.DB.Close()
 
 	controller := api.Make(dao)
 
 	addr := ":" + os.Getenv("PORT")
-	if err := controller.Router.Run(addr); err != nil {
-		log.Fatalf("Failed running server: %v", err)
-	}
+	log.Fatal(controller.Router.Run(addr))
 }

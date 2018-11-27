@@ -21,8 +21,8 @@
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Get All Authors",
-                "operationId": "get-all-authors",
+                "summary": "Get All Author",
+                "operationId": "get-all-author",
                 "parameters": [
                     {
                         "type": "string",
@@ -45,12 +45,19 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/item.Author"
+                                "$ref": "#/definitions/model.Item"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "type": "object",
                             "$ref": "#/definitions/httputil.HTTPError"
@@ -97,11 +104,18 @@
                         "description": "OK",
                         "schema": {
                             "type": "object",
-                            "$ref": "#/definitions/model.CompAbs"
+                            "$ref": "#/definitions/model.Item"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "type": "object",
                             "$ref": "#/definitions/httputil.HTTPError"
@@ -118,8 +132,8 @@
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Get All Books",
-                "operationId": "get-all-books",
+                "summary": "Get All Book",
+                "operationId": "get-all-book",
                 "parameters": [
                     {
                         "type": "string",
@@ -133,18 +147,6 @@
                         "format": "string",
                         "description": "per_page product count (default=20)",
                         "name": "per_page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "search filter ('authors', 'categories', 'tags', default='all')",
-                        "name": "filter",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "search query ('tere liye', 'agama', 'smp', default='')",
-                        "name": "query",
                         "in": "query"
                     }
                 ],
@@ -160,6 +162,13 @@
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "type": "object",
                             "$ref": "#/definitions/httputil.HTTPError"
@@ -201,6 +210,13 @@
                             "type": "object",
                             "$ref": "#/definitions/httputil.HTTPError"
                         }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
                     }
                 }
             }
@@ -213,8 +229,8 @@
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Get All Categories",
-                "operationId": "get-all-categories",
+                "summary": "Get All Category",
+                "operationId": "get-all-category",
                 "parameters": [
                     {
                         "type": "string",
@@ -237,12 +253,19 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/item.Category"
+                                "$ref": "#/definitions/model.Item"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "type": "object",
                             "$ref": "#/definitions/httputil.HTTPError"
@@ -289,11 +312,18 @@
                         "description": "OK",
                         "schema": {
                             "type": "object",
-                            "$ref": "#/definitions/model.CompAbs"
+                            "$ref": "#/definitions/model.Item"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "type": "object",
                             "$ref": "#/definitions/httputil.HTTPError"
@@ -310,8 +340,8 @@
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Get All Tags",
-                "operationId": "get-all-tags",
+                "summary": "Get All Tag",
+                "operationId": "get-all-tag",
                 "parameters": [
                     {
                         "type": "string",
@@ -334,12 +364,19 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/item.Tag"
+                                "$ref": "#/definitions/model.Item"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "type": "object",
                             "$ref": "#/definitions/httputil.HTTPError"
@@ -386,11 +423,18 @@
                         "description": "OK",
                         "schema": {
                             "type": "object",
-                            "$ref": "#/definitions/model.CompAbs"
+                            "$ref": "#/definitions/model.Item"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "type": "object",
                             "$ref": "#/definitions/httputil.HTTPError"
@@ -412,87 +456,19 @@
                 }
             }
         },
-        "item.Author": {
-            "type": "object",
-            "properties": {
-                "books": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "item.Category": {
-            "type": "object",
-            "properties": {
-                "books": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "item.Tag": {
-            "type": "object",
-            "properties": {
-                "books": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.AbsItem": {
-            "type": "object",
-            "properties": {
-                "books": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
         "model.Book": {
             "type": "object",
             "properties": {
                 "authors": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/item.Author"
+                        "$ref": "#/definitions/model.Item"
                     }
                 },
                 "categories": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/item.Category"
+                        "$ref": "#/definitions/model.Item"
                     }
                 },
                 "description": {
@@ -510,7 +486,7 @@
                 "tags": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/item.Tag"
+                        "$ref": "#/definitions/model.Item"
                     }
                 },
                 "title": {
@@ -518,7 +494,7 @@
                 }
             }
         },
-        "model.CompAbs": {
+        "model.Item": {
             "type": "object",
             "properties": {
                 "books": {
@@ -527,9 +503,11 @@
                         "$ref": "#/definitions/model.Book"
                     }
                 },
-                "item": {
-                    "type": "object",
-                    "$ref": "#/definitions/model.AbsItem"
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
                 }
             }
         }

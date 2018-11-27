@@ -7,59 +7,15 @@ definitions:
       message:
         type: string
     type: object
-  item.Author:
-    properties:
-      books:
-        items:
-          type: integer
-        type: array
-      id:
-        type: integer
-      name:
-        type: string
-    type: object
-  item.Category:
-    properties:
-      books:
-        items:
-          type: integer
-        type: array
-      id:
-        type: integer
-      name:
-        type: string
-    type: object
-  item.Tag:
-    properties:
-      books:
-        items:
-          type: integer
-        type: array
-      id:
-        type: integer
-      name:
-        type: string
-    type: object
-  model.AbsItem:
-    properties:
-      books:
-        items:
-          type: integer
-        type: array
-      id:
-        type: integer
-      name:
-        type: string
-    type: object
   model.Book:
     properties:
       authors:
         items:
-          $ref: '#/definitions/item.Author'
+          $ref: '#/definitions/model.Item'
         type: array
       categories:
         items:
-          $ref: '#/definitions/item.Category'
+          $ref: '#/definitions/model.Item'
         type: array
       description:
         type: string
@@ -71,20 +27,21 @@ definitions:
         type: string
       tags:
         items:
-          $ref: '#/definitions/item.Tag'
+          $ref: '#/definitions/model.Item'
         type: array
       title:
         type: string
     type: object
-  model.CompAbs:
+  model.Item:
     properties:
       books:
         items:
           $ref: '#/definitions/model.Book'
         type: array
-      item:
-        $ref: '#/definitions/model.AbsItem'
-        type: object
+      id:
+        type: integer
+      name:
+        type: string
     type: object
 host: '{{.Host}}'
 info:
@@ -100,7 +57,7 @@ paths:
     get:
       consumes:
       - application/json
-      operationId: get-all-authors
+      operationId: get-all-author
       parameters:
       - description: page number (default=1)
         format: string
@@ -119,14 +76,19 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/item.Author'
+              $ref: '#/definitions/model.Item'
             type: array
         "400":
           description: Bad Request
           schema:
             $ref: '#/definitions/httputil.HTTPError'
             type: object
-      summary: Get All Authors
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+            type: object
+      summary: Get All Author
   /api/author/{id}:
     get:
       consumes:
@@ -154,10 +116,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.CompAbs'
+            $ref: '#/definitions/model.Item'
             type: object
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+            type: object
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/httputil.HTTPError'
             type: object
@@ -166,7 +133,7 @@ paths:
     get:
       consumes:
       - application/json
-      operationId: get-all-books
+      operationId: get-all-book
       parameters:
       - description: page number (default=1)
         format: string
@@ -177,14 +144,6 @@ paths:
         format: string
         in: query
         name: per_page
-        type: string
-      - description: search filter ('authors', 'categories', 'tags', default='all')
-        in: query
-        name: filter
-        type: string
-      - description: search query ('tere liye', 'agama', 'smp', default='')
-        in: query
-        name: query
         type: string
       produces:
       - application/json
@@ -200,7 +159,12 @@ paths:
           schema:
             $ref: '#/definitions/httputil.HTTPError'
             type: object
-      summary: Get All Books
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+            type: object
+      summary: Get All Book
   /api/book/{id}:
     get:
       consumes:
@@ -225,12 +189,17 @@ paths:
           schema:
             $ref: '#/definitions/httputil.HTTPError'
             type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+            type: object
       summary: Get Book By ID
   /api/category:
     get:
       consumes:
       - application/json
-      operationId: get-all-categories
+      operationId: get-all-category
       parameters:
       - description: page number (default=1)
         format: string
@@ -249,14 +218,19 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/item.Category'
+              $ref: '#/definitions/model.Item'
             type: array
         "400":
           description: Bad Request
           schema:
             $ref: '#/definitions/httputil.HTTPError'
             type: object
-      summary: Get All Categories
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+            type: object
+      summary: Get All Category
   /api/category/{id}:
     get:
       consumes:
@@ -284,10 +258,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.CompAbs'
+            $ref: '#/definitions/model.Item'
             type: object
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+            type: object
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/httputil.HTTPError'
             type: object
@@ -296,7 +275,7 @@ paths:
     get:
       consumes:
       - application/json
-      operationId: get-all-tags
+      operationId: get-all-tag
       parameters:
       - description: page number (default=1)
         format: string
@@ -315,14 +294,19 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/item.Tag'
+              $ref: '#/definitions/model.Item'
             type: array
         "400":
           description: Bad Request
           schema:
             $ref: '#/definitions/httputil.HTTPError'
             type: object
-      summary: Get All Tags
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+            type: object
+      summary: Get All Tag
   /api/tag/{id}:
     get:
       consumes:
@@ -350,10 +334,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.CompAbs'
+            $ref: '#/definitions/model.Item'
             type: object
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+            type: object
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/httputil.HTTPError'
             type: object

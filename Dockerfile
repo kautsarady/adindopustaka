@@ -10,8 +10,6 @@ COPY . ./
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix nocgo -o /app .
 
 FROM scratch
+COPY public public
 COPY --from=builder /app ./
 ENTRYPOINT ["./app"]
-
-# # App Engine Dockerfile
-# FROM gcr.io/adindopustaka/backend

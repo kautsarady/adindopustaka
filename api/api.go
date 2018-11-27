@@ -3,16 +3,14 @@ package api
 import (
 	"errors"
 	"net/http"
-	"strconv"
 
-	"github.com/99designs/gqlgen/handler"
-	"github.com/gin-gonic/gin"
+	"github.com/kautsarady/adindopustaka/httputil"
+	"github.com/kautsarady/adindopustaka/model"
 
 	// doc.json
 	_ "github.com/kautsarady/adindopustaka/docs"
-	"github.com/kautsarady/adindopustaka/gql"
-	"github.com/kautsarady/adindopustaka/httputil"
-	"github.com/kautsarady/adindopustaka/model"
+
+	"github.com/gin-gonic/gin"
 	"github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 )
@@ -26,168 +24,167 @@ type Controller struct {
 // Make .
 func Make(dao *model.DAO) *Controller {
 	ctr := &Controller{dao, gin.Default()}
+	ctr.Router.LoadHTMLGlob("public/*")
+	ctr.Router.GET("/", ctr.PageLanding)
+	ctr.Router.GET("/filter", ctr.PageFilter)
+	ctr.Router.GET("/book/:id", ctr.PageBook)
+	ctr.Router.GET("/author/:id", ctr.PageAuthor)
+	ctr.Router.GET("/category/:id", ctr.PageCategory)
+	ctr.Router.GET("/tag/:id", ctr.PageTag)
 	api := ctr.Router.Group("/api")
 	{
 		api.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-		api.GET("/book", ctr.HandleBooks)
-		api.GET("/author", ctr.HandleAuthors)
-		api.GET("/category", ctr.HandleCategories)
-		api.GET("/tag", ctr.HandleTags)
-		api.GET("/book/:id", ctr.HandleBook)
-		api.GET("/author/:id", ctr.HandleAuthor)
-		api.GET("/category/:id", ctr.HandleCategory)
-		api.GET("/tag/:id", ctr.HandleTag)
-	}
-	gqlAPI := ctr.Router.Group("/gql")
-	gqlHandlerFunc := gin.WrapF(handler.GraphQL(gql.NewExecutableSchema(gql.Config{Resolvers: &gql.Resolver{DAO: dao}})))
-	{
-		gqlAPI.GET("/", gin.WrapF(handler.Playground("Adindopustaka GraphQL", "/gql/query")))
-		gqlAPI.GET("/query", gqlHandlerFunc)
-		gqlAPI.POST("/query", gqlHandlerFunc)
-		gqlAPI.OPTIONS("/query", gqlHandlerFunc)
+		api.GET("/book", ctr.GetAllBook)
+		api.GET("/author", ctr.GetAllAuthor)
+		api.GET("/category", ctr.GetAllCategory)
+		api.GET("/tag", ctr.GetAllTag)
+		api.GET("/book/:id", ctr.GetBook)
+		api.GET("/author/:id", ctr.GetAuthor)
+		api.GET("/category/:id", ctr.GetCategory)
+		api.GET("/tag/:id", ctr.GetTag)
 	}
 	return ctr
 }
 
-// @title Adindopustaka API
+// @title github.com/kautsarady/Adindopustaka API
 // @version 1.0
-// @description Adindopustaka API documentation
+// @description github.com/kautsarady/Adindopustaka API documentation
 // @contact.name kautsarady
 // @contact.email kautsarady@gmail.com
 
-// HandleBooks godoc
-// @Summary Get All Books
-// @ID get-all-books
+// GetAllBook godoc
+// @Summary Get All Book
+// @ID get-all-book
 // @Accept json
 // @Produce json
 // @Param page query string false "page number (default=1)" Format(string)
 // @Param per_page query string false "per_page product count (default=20)" Format(string)
-// @Param filter query string false "search filter ('authors', 'categories', 'tags', default='all')"
-// @Param query query string false "search query ('tere liye', 'agama', 'smp', default='')"
 // @Success 200 {array} model.Book
 // @Failure 400 {object} httputil.HTTPError
+// @Failure 404 {object} httputil.HTTPError
 // @Router /api/book [get]
-func (ctr *Controller) HandleBooks(ctx *gin.Context) {
-
-	offset, limit, err := paginate(ctx)
+func (ctr *Controller) GetAllBook(ctx *gin.Context) {
+	limit, offset, err := paginate(ctx)
 	if err != nil {
-		httputil.NewError(ctx, http.StatusBadRequest, errors.New("query string 'page' AND 'per_page' MUST be a VALID NUMBER"))
+		httputil.NewError(ctx, http.StatusBadRequest, err)
 		return
 	}
 
-	query := ctx.DefaultQuery("query", "")
-	filter := ctx.DefaultQuery("filter", "all")
-
-	if filter == "all" {
-		books, err := ctr.DAO.GetAllBooks(offset, limit)
-		if err != nil {
-			httputil.NewError(ctx, http.StatusInternalServerError, err)
-			return
-		}
-		ctx.JSON(http.StatusOK, books)
-		return
-	}
-
-	if query == "" {
-		httputil.NewError(ctx, http.StatusBadRequest, errors.New("query string 'query' NOT FOUND"))
-		return
-	}
-
-	books, err := ctr.DAO.GetFilterBooks(filter, query, offset, limit)
+	books, err := ctr.DAO.Get("books", nil, limit, offset)
 	if err != nil {
-		httputil.NewError(ctx, http.StatusInternalServerError, err)
+		httputil.NewError(ctx, http.StatusInternalServerError, errors.New("database query failure"))
+		ctx.Error(err)
 		return
 	}
 
 	if books == nil {
-		httputil.NewError(ctx, http.StatusSeeOther, errors.New("no corresponding result found"))
+		httputil.NewError(ctx, http.StatusNotFound, errors.New("no corresponding data found"))
+		return
 	}
 
 	ctx.JSON(http.StatusOK, books)
 }
 
-// HandleAuthors godoc
-// @Summary Get All Authors
-// @ID get-all-authors
+// GetAllAuthor godoc
+// @Summary Get All Author
+// @ID get-all-author
 // @Accept json
 // @Produce json
 // @Param page query string false "page number (default=1)" Format(string)
 // @Param per_page query string false "per_page product count (default=20)" Format(string)
-// @Success 200 {array} item.Author
+// @Success 200 {array} model.Item
 // @Failure 400 {object} httputil.HTTPError
+// @Failure 404 {object} httputil.HTTPError
 // @Router /api/author [get]
-func (ctr *Controller) HandleAuthors(ctx *gin.Context) {
-
-	offset, limit, err := paginate(ctx)
+func (ctr *Controller) GetAllAuthor(ctx *gin.Context) {
+	limit, offset, err := paginate(ctx)
 	if err != nil {
-		httputil.NewError(ctx, http.StatusBadRequest, errors.New("query string 'page' AND 'per_page' MUST be a VALID NUMBER"))
+		httputil.NewError(ctx, http.StatusBadRequest, err)
 		return
 	}
 
-	authors, err := ctr.DAO.GetAllAuthors(offset, limit)
+	authors, err := ctr.DAO.GetDistinctItems("authors", limit, offset)
 	if err != nil {
-		httputil.NewError(ctx, http.StatusInternalServerError, err)
+		httputil.NewError(ctx, http.StatusInternalServerError, errors.New("database query failure"))
+		ctx.Error(err)
+		return
+	}
+
+	if authors == nil {
+		httputil.NewError(ctx, http.StatusNotFound, errors.New("no corresponding data found"))
 		return
 	}
 
 	ctx.JSON(http.StatusOK, authors)
 }
 
-// HandleCategories godoc
-// @Summary Get All Categories
-// @ID get-all-categories
+// GetAllCategory godoc
+// @Summary Get All Category
+// @ID get-all-category
 // @Accept json
 // @Produce json
 // @Param page query string false "page number (default=1)" Format(string)
 // @Param per_page query string false "per_page product count (default=20)" Format(string)
-// @Success 200 {array} item.Category
+// @Success 200 {array} model.Item
 // @Failure 400 {object} httputil.HTTPError
+// @Failure 404 {object} httputil.HTTPError
 // @Router /api/category [get]
-func (ctr *Controller) HandleCategories(ctx *gin.Context) {
-
-	offset, limit, err := paginate(ctx)
+func (ctr *Controller) GetAllCategory(ctx *gin.Context) {
+	limit, offset, err := paginate(ctx)
 	if err != nil {
-		httputil.NewError(ctx, http.StatusBadRequest, errors.New("query string 'page' AND 'per_page' MUST be a VALID NUMBER"))
+		httputil.NewError(ctx, http.StatusBadRequest, err)
 		return
 	}
 
-	categories, err := ctr.DAO.GetAllCategories(offset, limit)
+	categories, err := ctr.DAO.GetDistinctItems("categories", limit, offset)
 	if err != nil {
-		httputil.NewError(ctx, http.StatusInternalServerError, err)
+		httputil.NewError(ctx, http.StatusInternalServerError, errors.New("database query failure"))
+		ctx.Error(err)
+		return
+	}
+
+	if categories == nil {
+		httputil.NewError(ctx, http.StatusNotFound, errors.New("no corresponding data found"))
 		return
 	}
 
 	ctx.JSON(http.StatusOK, categories)
 }
 
-// HandleTags godoc
-// @Summary Get All Tags
-// @ID get-all-tags
+// GetAllTag godoc
+// @Summary Get All Tag
+// @ID get-all-tag
 // @Accept json
 // @Produce json
 // @Param page query string false "page number (default=1)" Format(string)
 // @Param per_page query string false "per_page product count (default=20)" Format(string)
-// @Success 200 {array} item.Tag
+// @Success 200 {array} model.Item
 // @Failure 400 {object} httputil.HTTPError
+// @Failure 404 {object} httputil.HTTPError
 // @Router /api/tag [get]
-func (ctr *Controller) HandleTags(ctx *gin.Context) {
-
-	offset, limit, err := paginate(ctx)
+func (ctr *Controller) GetAllTag(ctx *gin.Context) {
+	limit, offset, err := paginate(ctx)
 	if err != nil {
-		httputil.NewError(ctx, http.StatusBadRequest, errors.New("query string 'page' AND 'per_page' MUST be a VALID NUMBER"))
+		httputil.NewError(ctx, http.StatusBadRequest, err)
 		return
 	}
 
-	tags, err := ctr.DAO.GetAllTags(offset, limit)
+	tags, err := ctr.DAO.GetDistinctItems("tags", limit, offset)
 	if err != nil {
-		httputil.NewError(ctx, http.StatusInternalServerError, err)
+		httputil.NewError(ctx, http.StatusInternalServerError, errors.New("database query failure"))
+		ctx.Error(err)
+		return
+	}
+
+	if tags == nil {
+		httputil.NewError(ctx, http.StatusNotFound, errors.New("no corresponding data found"))
 		return
 	}
 
 	ctx.JSON(http.StatusOK, tags)
 }
 
-// HandleBook godoc
+// GetBook godoc
 // @Summary Get Book By ID
 // @ID get-all-getBookByID
 // @Accept json
@@ -195,25 +192,27 @@ func (ctr *Controller) HandleTags(ctx *gin.Context) {
 // @Param id path string true "book id to search"
 // @Success 200 {object} model.Book
 // @Failure 400 {object} httputil.HTTPError
+// @Failure 404 {object} httputil.HTTPError
 // @Router /api/book/{id} [get]
-func (ctr *Controller) HandleBook(ctx *gin.Context) {
-	idStr := ctx.Param("id")
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		httputil.NewError(ctx, http.StatusBadRequest, errors.New("parameter 'id' must be a valid number"))
-		return
-	}
+func (ctr *Controller) GetBook(ctx *gin.Context) {
+	id := ctx.Param("id")
 
 	book, err := ctr.DAO.GetBookByID(id)
 	if err != nil {
-		httputil.NewError(ctx, http.StatusInternalServerError, err)
+		httputil.NewError(ctx, http.StatusInternalServerError, errors.New("database query failure"))
+		ctx.Error(err)
+		return
+	}
+
+	if book == nil {
+		httputil.NewError(ctx, http.StatusNotFound, errors.New("no corresponding data found"))
 		return
 	}
 
 	ctx.JSON(http.StatusOK, book)
 }
 
-// HandleAuthor godoc
+// GetAuthor godoc
 // @Summary Get Author By ID
 // @ID get-all-getAuthorByID
 // @Accept json
@@ -221,40 +220,35 @@ func (ctr *Controller) HandleBook(ctx *gin.Context) {
 // @Param id path string true "author id to search"
 // @Param page query string false "page number of the item books (default=1)" Format(string)
 // @Param per_page query string false "per_page product count of the item books (default=20)" Format(string)
-// @Success 200 {object} model.CompAbs
+// @Success 200 {object} model.Item
 // @Failure 400 {object} httputil.HTTPError
+// @Failure 404 {object} httputil.HTTPError
 // @Router /api/author/{id} [get]
-func (ctr *Controller) HandleAuthor(ctx *gin.Context) {
-	filter := "authors"
-	idStr := ctx.Param("id")
-	id, err := strconv.Atoi(idStr)
+func (ctr *Controller) GetAuthor(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	limit, offset, err := paginate(ctx)
 	if err != nil {
-		httputil.NewError(ctx, http.StatusBadRequest, errors.New("parameter 'id' must be a valid number"))
+		httputil.NewError(ctx, http.StatusBadRequest, err)
 		return
 	}
 
-	offset, limit, err := paginate(ctx)
+	author, err := ctr.DAO.GetItemByID("authors", id, limit, offset)
 	if err != nil {
-		httputil.NewError(ctx, http.StatusBadRequest, errors.New("query string 'page' AND 'per_page' MUST be a VALID NUMBER"))
+		httputil.NewError(ctx, http.StatusInternalServerError, errors.New("database query failure"))
+		ctx.Error(err)
 		return
 	}
 
-	a, err := ctr.DAO.GetItemByID(filter, id)
-	if err != nil {
-		httputil.NewError(ctx, http.StatusInternalServerError, err)
+	if author == nil {
+		httputil.NewError(ctx, http.StatusNotFound, errors.New("no corresponding data found"))
 		return
 	}
 
-	b, err := ctr.DAO.GetFilterBooks(filter, a.Name, offset, limit)
-	if err != nil {
-		httputil.NewError(ctx, http.StatusInternalServerError, err)
-		return
-	}
-
-	ctx.JSON(http.StatusOK, model.CompAbs{Item: a, Books: b})
+	ctx.JSON(http.StatusOK, author)
 }
 
-// HandleCategory godoc
+// GetCategory godoc
 // @Summary Get Category By ID
 // @ID get-all-getCategoryByID
 // @Accept json
@@ -262,40 +256,35 @@ func (ctr *Controller) HandleAuthor(ctx *gin.Context) {
 // @Param id path string true "category id to search"
 // @Param page query string false "page number of the item books (default=1)" Format(string)
 // @Param per_page query string false "per_page product count of the item books (default=20)" Format(string)
-// @Success 200 {object} model.CompAbs
+// @Success 200 {object} model.Item
 // @Failure 400 {object} httputil.HTTPError
+// @Failure 404 {object} httputil.HTTPError
 // @Router /api/category/{id} [get]
-func (ctr *Controller) HandleCategory(ctx *gin.Context) {
-	filter := "categories"
-	idStr := ctx.Param("id")
-	id, err := strconv.Atoi(idStr)
+func (ctr *Controller) GetCategory(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	limit, offset, err := paginate(ctx)
 	if err != nil {
-		httputil.NewError(ctx, http.StatusBadRequest, errors.New("parameter 'id' must be a valid number"))
+		httputil.NewError(ctx, http.StatusBadRequest, err)
 		return
 	}
 
-	offset, limit, err := paginate(ctx)
+	category, err := ctr.DAO.GetItemByID("categories", id, limit, offset)
 	if err != nil {
-		httputil.NewError(ctx, http.StatusBadRequest, errors.New("query string 'page' AND 'per_page' MUST be a VALID NUMBER"))
+		httputil.NewError(ctx, http.StatusInternalServerError, errors.New("database query failure"))
+		ctx.Error(err)
 		return
 	}
 
-	a, err := ctr.DAO.GetItemByID(filter, id)
-	if err != nil {
-		httputil.NewError(ctx, http.StatusInternalServerError, err)
+	if category == nil {
+		httputil.NewError(ctx, http.StatusNotFound, errors.New("no corresponding data found"))
 		return
 	}
 
-	b, err := ctr.DAO.GetFilterBooks(filter, a.Name, offset, limit)
-	if err != nil {
-		httputil.NewError(ctx, http.StatusInternalServerError, err)
-		return
-	}
-
-	ctx.JSON(http.StatusOK, model.CompAbs{Item: a, Books: b})
+	ctx.JSON(http.StatusOK, category)
 }
 
-// HandleTag godoc
+// GetTag godoc
 // @Summary Get Tag By ID
 // @ID get-all-getTagByID
 // @Accept json
@@ -303,50 +292,30 @@ func (ctr *Controller) HandleCategory(ctx *gin.Context) {
 // @Param id path string true "tag id to search"
 // @Param page query string false "page number of the item books (default=1)" Format(string)
 // @Param per_page query string false "per_page product count of the item books (default=20)" Format(string)
-// @Success 200 {object} model.CompAbs
+// @Success 200 {object} model.Item
 // @Failure 400 {object} httputil.HTTPError
+// @Failure 404 {object} httputil.HTTPError
 // @Router /api/tag/{id} [get]
-func (ctr *Controller) HandleTag(ctx *gin.Context) {
-	filter := "tags"
-	idStr := ctx.Param("id")
-	id, err := strconv.Atoi(idStr)
+func (ctr *Controller) GetTag(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	limit, offset, err := paginate(ctx)
 	if err != nil {
-		httputil.NewError(ctx, http.StatusBadRequest, errors.New("parameter 'id' must be a valid number"))
+		httputil.NewError(ctx, http.StatusBadRequest, err)
 		return
 	}
 
-	offset, limit, err := paginate(ctx)
+	tag, err := ctr.DAO.GetItemByID("tags", id, limit, offset)
 	if err != nil {
-		httputil.NewError(ctx, http.StatusBadRequest, errors.New("query string 'page' AND 'per_page' MUST be a VALID NUMBER"))
+		httputil.NewError(ctx, http.StatusInternalServerError, errors.New("database query failure"))
+		ctx.Error(err)
 		return
 	}
 
-	a, err := ctr.DAO.GetItemByID(filter, id)
-	if err != nil {
-		httputil.NewError(ctx, http.StatusInternalServerError, err)
+	if tag == nil {
+		httputil.NewError(ctx, http.StatusNotFound, errors.New("no corresponding data found"))
 		return
 	}
 
-	b, err := ctr.DAO.GetFilterBooks(filter, a.Name, offset, limit)
-	if err != nil {
-		httputil.NewError(ctx, http.StatusInternalServerError, err)
-		return
-	}
-
-	ctx.JSON(http.StatusOK, model.CompAbs{Item: a, Books: b})
-}
-
-func paginate(ctx *gin.Context) (offset int, limit int, err error) {
-	pageNumS := ctx.DefaultQuery("page", "1")
-	perPageS := ctx.DefaultQuery("per_page", "20")
-	pageNum, err := strconv.Atoi(pageNumS)
-	if err != nil {
-		return -1, -1, err
-	}
-	limit, err = strconv.Atoi(perPageS)
-	if err != nil {
-		return -1, -1, err
-	}
-	offset = (pageNum - 1) * limit
-	return
+	ctx.JSON(http.StatusOK, tag)
 }

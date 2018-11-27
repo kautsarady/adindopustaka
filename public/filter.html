@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Choose Filter</title>
+    <style>
+        body {
+            display: flex;
+        }
+
+        .entity {
+            width: 33%;
+        }
+    </style>
+</head>
+
+<body>
+    <h2><a href="/">All Book</a></h2>
+    <a href="/filter?page={{ .Metadata.Prev }}&per_page={{ .Metadata.PerPage }}">Prev</a>
+    <a href="/filter?page={{ .Metadata.Next }}&per_page={{ .Metadata.PerPage }}">Next</a>
+    <div class="entity">
+        <h2>Authors</h2>
+        {{ range .Data.Authors }}
+        <h3><a href="/author/{{ .ID }}">{{ .Name }}</a></h3><br>
+        {{ end }}
+    </div>
+
+    <div class="entity">
+        <h2>Categories</h2>
+        {{ range .Data.Categories }}
+        <h3><a href="/category/{{ .ID }}">{{ .Name }}</a></h3><br>
+        {{ end }}
+    </div>
+
+    <div class="entity">
+        <h2>Tags</h2>
+        {{ range .Data.Tags }}
+        <h3><a href="/tag/{{ .ID }}">{{ .Name }}</a></h3><br>
+        {{ end }}
+    </div>
+</body>
+
+</html>

@@ -2,12 +2,6 @@
 
 
 [[projects]]
-  branch = "master"
-  name = "github.com/99designs/gqlgen"
-  packages = ["complexity","graphql","graphql/introspection","handler"]
-  revision = "f7932b40ee0f75b35428af917cd05193b7f3414f"
-
-[[projects]]
   name = "github.com/PuerkitoBio/purell"
   packages = ["."]
   revision = "0bcb03f4b4d0a9428594752bd2a3b9aa0a9d4bd4"
@@ -18,12 +12,6 @@
   name = "github.com/PuerkitoBio/urlesc"
   packages = ["."]
   revision = "de5bf2ad457846296e2031421a34e2568e304e35"
-
-[[projects]]
-  name = "github.com/agnivade/levenshtein"
-  packages = ["."]
-  revision = "834b435c3df04fba060c8d74a40d849ab2c4a090"
-  version = "v1.0.1"
 
 [[projects]]
   branch = "master"
@@ -78,18 +66,6 @@
   packages = ["proto"]
   revision = "aa810b61a9c79d51363740d207bb46cf8e620ed5"
   version = "v1.2.0"
-
-[[projects]]
-  name = "github.com/gorilla/websocket"
-  packages = ["."]
-  revision = "66b9c49e59c6c48f0ffce28c2d8b8a5678502c6d"
-  version = "v1.4.0"
-
-[[projects]]
-  name = "github.com/hashicorp/golang-lru"
-  packages = [".","simplelru"]
-  revision = "20f1fb78b0740ba8c3cb143a61e86ba5c8669768"
-  version = "v0.5.0"
 
 [[projects]]
   name = "github.com/json-iterator/go"
@@ -147,12 +123,6 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/vektah/gqlparser"
-  packages = [".","ast","gqlerror","lexer","parser","validator","validator/rules"]
-  revision = "6f09700b13a33a80c5dc33117b8177aff00d906c"
-
-[[projects]]
-  branch = "master"
   name = "golang.org/x/net"
   packages = ["context","idna","webdav","webdav/internal/xml"]
   revision = "adae6a3d119ae4890b46832a2e88a95adc62b8e7"
@@ -196,6 +166,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "e93767cc60de33b416ea1e04999b4aeba8c5253e65956426f51ae346c1e1c876"
+  inputs-digest = "b4730b82ef9cc7ec050122d98fa327bd421e45b7cfa9c1ec8171a727f6251759"
   solver-name = "gps-cdcl"
   solver-version = 1
