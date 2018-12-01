@@ -74,7 +74,7 @@ func (ctr *Controller) PageAuthor(ctx *gin.Context) {
 		return
 	}
 
-	ctx.HTML(http.StatusOK, "entity.html", wrapData("author", limit, offset, author))
+	ctx.HTML(http.StatusOK, "entity.html", wrapData("author/"+id, limit, offset, author))
 }
 
 // PageCategory .
@@ -99,7 +99,7 @@ func (ctr *Controller) PageCategory(ctx *gin.Context) {
 		return
 	}
 
-	ctx.HTML(http.StatusOK, "entity.html", wrapData("category", limit, offset, categories))
+	ctx.HTML(http.StatusOK, "entity.html", wrapData("category/"+id, limit, offset, categories))
 }
 
 // PageTag .
@@ -124,7 +124,7 @@ func (ctr *Controller) PageTag(ctx *gin.Context) {
 		return
 	}
 
-	ctx.HTML(http.StatusOK, "entity.html", wrapData("tag", limit, offset, tags))
+	ctx.HTML(http.StatusOK, "entity.html", wrapData("tag/"+id, limit, offset, tags))
 }
 
 // PageFilter .

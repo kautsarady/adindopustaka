@@ -4,13 +4,13 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 	"github.com/kautsarady/adindopustaka/httputil"
 	"github.com/kautsarady/adindopustaka/model"
 
 	// doc.json
 	_ "github.com/kautsarady/adindopustaka/docs"
-
-	"github.com/gin-gonic/gin"
 	"github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 )
@@ -24,6 +24,7 @@ type Controller struct {
 // Make .
 func Make(dao *model.DAO) *Controller {
 	ctr := &Controller{dao, gin.Default()}
+	ctr.Router.Use(cors.Default())
 	ctr.Router.LoadHTMLGlob("public/*")
 	ctr.Router.GET("/", ctr.PageLanding)
 	ctr.Router.GET("/filter", ctr.PageFilter)
