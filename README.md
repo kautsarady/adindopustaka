@@ -1,2 +1,2 @@
 # adindopustaka
-recreating whole backend of https://www.gramedia.com/ product api
+recreating CRUD (API) of https://www.gramedia.com/ products
